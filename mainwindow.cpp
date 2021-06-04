@@ -36,13 +36,40 @@ MainWindow::~MainWindow()
 
 
 /**
- *@brief start corecting the file when the launchButton is clicked
+ *@brief start corecting the file and show error style if something is wrong
  *@param none
  *@return void
  */
 void MainWindow::on_launchButton_clicked(){
 
-    //
+    char errorCode = correctFile(inputFile, outputDir);
+
+    if(errorCode == -1){
+
+        ui->inputLabel->setStyleSheet("{color: #FF0000}");
+        ui->outputLabel->setStyleSheet("{color: #000000}");
+
+        ui->errorInput->setVisible(true);
+        ui->errorOutput->setVisible(false);
+    }
+
+    else if(errorCode == -2){
+
+        ui->inputLabel->setStyleSheet("{color: #000000}");
+        ui->outputLabel->setStyleSheet("{color: #FF0000}");
+
+        ui->errorInput->setVisible(false);
+        ui->errorOutput->setVisible(true);
+    }
+
+    else{
+
+        ui->inputLabel->setStyleSheet("{color: #000000}");
+        ui->outputLabel->setStyleSheet("{color: #000000}");
+
+        ui->errorInput->setVisible(false);
+        ui->errorOutput->setVisible(false);
+    }
 }
 
 
