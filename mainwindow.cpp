@@ -20,6 +20,10 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
+    //set the error icon as not visible
+    ui->errorInput->setVisible(false);
+    ui->errorOutput->setVisible(false);
 }
 
 
@@ -44,28 +48,28 @@ void MainWindow::on_launchButton_clicked(){
 
     char errorCode = correctFile(inputFile, outputDir);
 
-    if(errorCode == -1){
+    if(errorCode == -1){ //error from the input file
 
-        ui->inputLabel->setStyleSheet("{color: #FF0000}");
-        ui->outputLabel->setStyleSheet("{color: #000000}");
+        ui->inputLabel->setStyleSheet("color: #FF0000");
+        ui->outputLabel->setStyleSheet("color: #000000");
 
         ui->errorInput->setVisible(true);
         ui->errorOutput->setVisible(false);
     }
 
-    else if(errorCode == -2){
+    else if(errorCode == -2){ //error from the output directory
 
-        ui->inputLabel->setStyleSheet("{color: #000000}");
-        ui->outputLabel->setStyleSheet("{color: #FF0000}");
+        ui->inputLabel->setStyleSheet("color: #000000");
+        ui->outputLabel->setStyleSheet("color: #FF0000");
 
         ui->errorInput->setVisible(false);
         ui->errorOutput->setVisible(true);
     }
 
-    else{
+    else{ //no error
 
-        ui->inputLabel->setStyleSheet("{color: #000000}");
-        ui->outputLabel->setStyleSheet("{color: #000000}");
+        ui->inputLabel->setStyleSheet("color: #000000");
+        ui->outputLabel->setStyleSheet("color: #000000");
 
         ui->errorInput->setVisible(false);
         ui->errorOutput->setVisible(false);
@@ -81,7 +85,7 @@ void MainWindow::on_launchButton_clicked(){
  */
 void MainWindow::on_quitButton_clicked(){
 
-    //
+    close();
 }
 
 
@@ -93,7 +97,10 @@ void MainWindow::on_quitButton_clicked(){
  */
 void MainWindow::on_browseFileInput_clicked(){
 
-    //
+    QString fileName = QFileDialog::getOpenFileName(this, tr("Ficher"), "", tr("Fichiers Textes (*.txt)") );
+    if(fileName != ""){
+        ui->lineEditInputFile->setText(fileName);
+    }
 }
 
 
@@ -105,7 +112,10 @@ void MainWindow::on_browseFileInput_clicked(){
  */
 void MainWindow::on_browseFileOutput_clicked(){
 
-    //
+    QString directoryName = QFileDialog::getExistingDirectory(this, tr("Open Directory"), "", QFileDialog::ShowDirsOnly);
+    if(directoryName != ""){
+        ui->lineEditOutputFile->setText(directoryName);
+    }
 }
 
 
@@ -117,7 +127,7 @@ void MainWindow::on_browseFileOutput_clicked(){
  */
 void MainWindow::on_lineEditInputFile_textChanged(const QString &newText){
 
-    //
+    inputFile = newText;
 }
 
 
@@ -129,7 +139,7 @@ void MainWindow::on_lineEditInputFile_textChanged(const QString &newText){
  */
 void MainWindow::on_lineEditOutputFile_textChanged(const QString &newText){
 
-    //
+    outputDir = newText;
 }
 
 
@@ -142,5 +152,17 @@ void MainWindow::on_lineEditOutputFile_textChanged(const QString &newText){
  */
 char MainWindow::correctFile(QString file_to_open, const QString &directory_to_output){
 
+    if(file_to_open.size() == 0){ //if file_to_open is empty
+        //
+        return -1;
+    }
+    else if(directory_to_output.size() == 0){ //if directory_to_output is empty
+        //
+        return -2;
+    }
+
     //
+    QString str = "fr";
+
+    return 0;
 }
