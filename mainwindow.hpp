@@ -48,7 +48,7 @@ public:
      *@param directory_to_output, the directory where the corected file will be send
      *@return an exit code
      */
-    char correctFile(QString file_to_open, const QString &directory_to_output);
+    char correctFile(QString file_to_open, QString directory_to_output);
 
 
 

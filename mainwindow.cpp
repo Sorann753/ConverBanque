@@ -97,7 +97,7 @@ void MainWindow::on_quitButton_clicked(){
  */
 void MainWindow::on_browseFileInput_clicked(){
 
-    QString fileName = QFileDialog::getOpenFileName(this, tr("Ficher"), "", tr("Fichiers Textes (*.txt)") );
+    QString fileName = QFileDialog::getOpenFileName(this, tr("Ouvrir le fichier"), "", tr("Fichiers Textes (*.txt)") );
     if(fileName != ""){
         ui->lineEditInputFile->setText(fileName);
     }
@@ -112,7 +112,7 @@ void MainWindow::on_browseFileInput_clicked(){
  */
 void MainWindow::on_browseFileOutput_clicked(){
 
-    QString directoryName = QFileDialog::getExistingDirectory(this, tr("Open Directory"), "", QFileDialog::ShowDirsOnly);
+    QString directoryName = QFileDialog::getExistingDirectory(this, tr("Choisir le dossier"), "", QFileDialog::ShowDirsOnly);
     if(directoryName != ""){
         ui->lineEditOutputFile->setText(directoryName);
     }
@@ -150,19 +150,78 @@ void MainWindow::on_lineEditOutputFile_textChanged(const QString &newText){
  *@param directory_to_output, the directory where the corected file will be send
  *@return an exit code
  */
-char MainWindow::correctFile(QString file_to_open, const QString &directory_to_output){
+char MainWindow::correctFile(QString file_to_open, QString directory_to_output){
 
     if(file_to_open.size() == 0){ //if file_to_open is empty
-        //
+
+        QMessageBox::warning(this, tr("ATTENTION"),tr("Veuillez sélectionner un fichier a corrigé"));
         return -1;
     }
     else if(directory_to_output.size() == 0){ //if directory_to_output is empty
-        //
+
+        QMessageBox::warning(this, tr("ATTENTION"),tr("Veuillez sélectionner un dossier où enregistré le fichier corrigé"));
         return -2;
     }
 
-    //
-    QString str = "fr";
+
+
+    QString buffer = file_to_open.left( file_to_open.lastIndexOf(".txt") );
+
+    int X = buffer.lastIndexOf("/");
+
+    QString fileName = "";
+
+    for(int i = X+1; i < buffer.size(); i++){
+
+        fileName += buffer[i];
+    }
+
+    QString outputFile_name = fileName + "_EDITED.txt";
+
+
+
+    QFile inputFile(file_to_open);
+
+    if(!inputFile.open(QFile::ReadOnly | QFile::Text | QFile::ExistingOnly)){
+
+        QMessageBox::critical(this, tr("ERREUR"),"Le fichier " + fileName + " n'a pas pus être ouvert");
+        return -1;
+    }
+
+    QTextStream inputStream(&inputFile);
+
+    QString line = inputStream.readAll();
+
+    if(line.size() > 121){
+
+        for(int i = 120; i < line.size(); i+= 121){
+
+            line.insert(i, "\n");
+        }
+    }
+
+
+
+    QFile outputFile(directory_to_output + "/" + outputFile_name);
+
+    if(!outputFile.open(QFile::WriteOnly | QFile::Text) ){
+
+        QMessageBox::critical(this, tr("ERREUR"),"Le fichier " + outputFile_name + " n'a pas pus être créer "
+                                                 "veuillez vérifier qu'il vous reste de la mémoire sur votre ordinateur");
+        return -2;
+    }
+
+    QTextStream outputStream(&outputFile);
+    outputStream << line;
+
+
+
+    outputFile.flush();
+    outputFile.close();
+
+    inputFile.close();
+
+    QMessageBox::information(this, tr("SUCCES"),"Le fichier " + outputFile_name + " a correctement été créer");
 
     return 0;
 }
